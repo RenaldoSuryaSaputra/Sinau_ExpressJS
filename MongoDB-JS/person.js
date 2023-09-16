@@ -21,7 +21,7 @@ personSchema.virtual("fullname").get(function () {
 });
 
 // middleware
-personSchema.pre("save", async function () {
+personSchema.pre("save", async function () { // bisa overwrite
   console.log("Pre simpan");
 });
 personSchema.post("save", async function () {
