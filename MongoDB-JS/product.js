@@ -67,7 +67,7 @@ productSchema.methods.outStock = function () {
   this.availability.offline = false;
   this.availability.online = false;
 
-  this.save();
+  return this.save();
 };
 
 productSchema.statics.closeStore = function () {
