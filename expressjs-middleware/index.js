@@ -3,26 +3,24 @@ import morgan from "morgan"; // library untuk menampila=kan log
 
 const app = express();
 
-app.use(morgan("tiny"));
+// app.use(morgan("tiny"));
 app.use((req, res, next) => {
-  console.log("Middleware Pertama")
+  // bisa override method atau nilai
+  // req.method = "PUT";
+  req.timeReqVar = new Date();
+  console.log(req.method, req.url);
   next();
-  console.log("Middleware Pertama Setelah Next")
-});
-app.use((req, res, next) => {
-    console.log("Middleware Kedua")
-    next();
-    console.log("Middleware Kedua Setelah Next")
 });
 
 app.get("/", (req, res) => {
   res.send("Helo Home");
-  console.log("HOME")
+  console.log("HOME");
 });
 
 app.get("/halaman", (req, res) => {
   res.send("Helo Halaman");
-  console.log("HAL")
+  console.log(req.timeReqVar)
+  console.log("HAL");
 });
 
 app.listen(3000, () => {
