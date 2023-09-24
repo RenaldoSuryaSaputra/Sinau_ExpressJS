@@ -81,6 +81,10 @@ app.delete('/products/:id', async (req, res) => {
   res.redirect('/products')
 })
 
+app.use((req, res) => {
+  res.status(404).send("page not found")
+})
+
 app.listen(3000, () => {
   console.log("Port Listening on http://127.0.0.1:3000 !");
 });
