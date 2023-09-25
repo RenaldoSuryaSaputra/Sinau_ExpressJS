@@ -26,6 +26,14 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
+// method untuk try catch
+function wrapAsync(fn) {
+  // param function
+  return function (req, res, next) {
+    fn(req, res, next).catch((err) => next(err)); // try catch ada error masuk catch
+  };
+}
+
 // Route
 app.get("/", (req, res) => {
   res.send("Helo World das");
@@ -49,59 +57,85 @@ app.get("/products/create", (req, res) => {
 });
 
 //  Post Product
-app.post("/products", async (req, res) => {
-  const product = new Product(req.body);
-  await product.save();
-  res.redirect(`/products/${product._id}`);
-});
+app.post(
+  "/products",
+  wrapAsync(async (req, res) => {
+    const product = new Product(req.body);
+    await product.save();
+    res.redirect(`/products/${product._id}`);
+  })
+);
 
 // product detail
 // pada async func jika mau menerapkan ErrorHandler maka harus implemantasi next
 // next(err)
-app.get("/products/:id", async (req, res, next) => {
-  try {
+// app.get("/products/:id", async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const product = await Product.findById(id);
+//     res.render("products/show", { product });
+//   } catch (error) {
+//     next(new ErrorHandler("Product Not Found", 404));
+//   }
+// });
+app.get(
+  "/products/:id",
+  wrapAsync(async (req, res) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     res.render("products/show", { product });
-  } catch (error) {
-    next(new ErrorHandler("Product Not Found", 404));
-  }
-});
+  })
+);
 
 // Edit ejs route
-app.get("/products/:id/edit", async (req, res) => {
-  try {
+app.get(
+  "/products/:id/edit",
+  wrapAsync(async (req, res) => {
     const { id } = req.params;
     const product = await Product.findById(id);
     res.render("products/edit", { product });
-  } catch (err) {
-    next(new ErrorHandler("Product Not Found", 404));
-  }
-});
+  })
+);
 
 // Edit Method
-app.put("/products/:id", async (req, res) => {
-  try {
+app.put(
+  "/products/:id",
+  wrapAsync(async (req, res) => {
     const { id } = req.params;
     const product = await Product.findByIdAndUpdate(id, req.body, {
       runValidators: true,
     });
     res.redirect(`/products/${product._id}`);
-  } catch (err) {
-    next(new ErrorHandler("Product Not Found", 404));
-  }
-});
+  })
+);
 
 // Delete Data
-app.delete("/products/:id", async (req, res) => {
-  try {
+app.delete(
+  "/products/:id",
+  wrapAsync(async (req, res) => {
     const { id } = req.params;
     await Product.findByIdAndDelete(id);
     res.redirect("/products");
-  } catch (err) {
-    next(new ErrorHandler("Product Not Found", 404));
+  })
+);
+
+const validatorHandler = err => {
+  err.status = 400
+  err.message = Object.values(err.errors).map(item => item.message)
+  return new ErrorHandler(err.message, err.status)
+}
+
+
+app.use((err, req, res, next) => {
+  console.dir(err)
+  //  Dalam mongoose ada 2 type error ValidationError & CastError
+  if (err.name === 'ValidationError') err = validatorHandler(err)
+  if (err.name === 'CastError') {
+      err.status = 404
+      err.message = 'Product not found'
   }
-});
+  next(err)
+})
 
 // Kalau ada error program (middleware)
 app.use((err, req, res, next) => {
