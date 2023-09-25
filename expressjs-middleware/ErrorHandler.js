@@ -6,7 +6,7 @@ export default class ErrorHandler extends Error {
         // this.isOperational = true
         // Error.captureStackTrace(this, this.constructor)
         super()
-        this.statusCode = statusCode
+        this.status = statusCode
         this.message = message
     }
 }
