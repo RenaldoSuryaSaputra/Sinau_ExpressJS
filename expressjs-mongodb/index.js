@@ -5,7 +5,6 @@ const ErrorHandler = require("./ErrorHandler");
 const morgan = require("morgan");
 const app = express();
 const methodOverride = require("method-override");
-
 // models
 const Product = require("./models/product");
 
@@ -144,7 +143,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res) => {
-  res.status(404).send("page not found");
+  res.status(404).send("Page not found");
 });
 
 app.listen(3000, () => {
