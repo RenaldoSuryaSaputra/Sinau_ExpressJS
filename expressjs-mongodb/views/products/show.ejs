@@ -7,8 +7,7 @@
     <title>Detail Product</title>
 </head>
 <body>
-
-    <h1>Detail dari <%= product.name %></h1>
+    <h1><%= product.name %></h1>
     <ul>
         <li>Brand: <%= product.brand %></li>
         <li>Warna: <%= product.color %></li>
@@ -18,10 +17,15 @@
                     <%= product.category %></a> 
         </li>
     </ul>
+    <h2>Garment:</h2>
+    <ul>
+        <li><a href="/garments/<%= product.garment._id %>"><%= product.garment.name %></a></li>
+    </ul>
     <a href="/products">All Products</a>
     <a href="/products/<%= product._id %>/edit">Edit</a>
     <form action="/products/<%= product._id %>?_method=DELETE" method="post">
         <button type="submit">Delete</button>
     </form>
+    
 </body>
 </html>

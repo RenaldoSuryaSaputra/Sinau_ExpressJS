@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const Garment = require('./garment')
+
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -20,9 +22,13 @@ const productSchema = new mongoose.Schema({
     category: {
         type: String,
         enum: ['Baju', 'Celana', 'Aksesoris', 'Jaket'],
+    },
+    garment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Garment",
     }
 })
 
-const Product = mongoose.model('Products', productSchema)
+const Product = mongoose.model('Product', productSchema)
 
 module.exports = Product
