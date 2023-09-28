@@ -12,7 +12,7 @@ const Garment = require("./models/garment");
 
 // Connect to mongoDB
 mongoose
-   .connect("mongodb://127.0.0.1/shopApp_db")
+   .connect("mongodb://127.0.0.1:27017/shopApp_db")
    .then((result) => {
       console.log("connected to mongodb");
    })
@@ -72,13 +72,12 @@ app.get(
          "price",
          "brand",
       ]);
-      console.log(garment);
       res.render("garment/show", { garment });
    })
 );
 
 // get create product for gamment based on id garment
-app.get("/garments/:garment_id/products/create", async (req, res) => {
+app.get("/garments/:garment_id/products/create", (req, res) => {
    const { garment_id } = req.params;
    res.render("products/create", { garment_id });
 });

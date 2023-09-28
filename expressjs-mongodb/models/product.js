@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-const Garment = require('./garment')
 
 const productSchema = new mongoose.Schema({
     name: {
