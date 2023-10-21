@@ -22,6 +22,8 @@ const garmentSchema = new mongoose.Schema({
    ],
 });
 
+
+// Mengacu Pada Method FindOneAndDelete di Index.js pada method delete garment
 garmentSchema.post("findOneAndDelete", async function (garment) {
    if (garment.products.length) {
       await Product.deleteMany({ _id: { $in: garment.products } })

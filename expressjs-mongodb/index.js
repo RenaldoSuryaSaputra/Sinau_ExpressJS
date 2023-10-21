@@ -67,6 +67,7 @@ app.get(
    "/garments/:id",
    wrapAsync(async (req, res) => {
       const { id } = req.params;
+      // populate uuntuk mengambil data products.. tanpa populate maka hanya tampil _id
       const garment = await Garment.findById(id).populate("products", [
          "name",
          "price",
@@ -82,13 +83,17 @@ app.get("/garments/:garment_id/products/create", (req, res) => {
    res.render("products/create", { garment_id });
 });
 
+// form action create product 
 app.post(
    "/garments/:garment_id/products",
    wrapAsync(async (req, res) => {
       const { garment_id } = req.params;
+      // buat productnya berdasarkan form
       const product = new Product(req.body);
+      // ambil garment yang terlibat
       const garment = await Garment.findById(garment_id);
       garment.products.push(product);
+      // set product.garment = garment sekarang
       product.garment = garment;
       await product.save();
       await garment.save();
@@ -167,11 +172,13 @@ app.post(
 //     next(new ErrorHandler("Product Not Found", 404));
 //   }
 // });
+
 app.get(
    "/products/:id",
    wrapAsync(async (req, res) => {
       const { id } = req.params;
       const product = await Product.findById(id).populate("garment");
+      console.log(product)
       res.render("products/show", { product });
    })
 );
