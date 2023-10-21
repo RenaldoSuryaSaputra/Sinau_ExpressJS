@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const ErrorHandler = require("./ErrorHandler");
+const session = require("express-session");
+const flash = require("connect-flash");
 const morgan = require("morgan");
 const app = express();
 const methodOverride = require("method-override");
@@ -20,12 +22,23 @@ mongoose
       console.log(error);
    });
 
-// setup
+// setup middleware
 app.use(morgan("dev"));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(session({
+   secret: "secret",
+   resave: false,
+   saveUninitialized: false
+}))
+app.use(flash())
+
+app.use((req, res, next) => {
+   res.locals.flash_messages = req.flash('flash_messages')
+   next();
+})
 
 // method untuk try catch
 function wrapAsync(fn) {
@@ -58,6 +71,7 @@ app.post(
    wrapAsync(async (req, res) => {
       const garment = new Garment(req.body); // lebih baik ada validasi
       await garment.save();
+      req.flash('flash_messages', 'Berhasil menambahkan data Pabrik!')
       res.redirect(`/garments`);
    })
 );
